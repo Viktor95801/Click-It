@@ -92,7 +92,7 @@ Uint32 gameRectRandomizeAllCallback(void *_, Uint32 __, Uint32 ___) {
         rectRandomize(20, 20, &game_rects[i]);
     }
 
-    rectRandomize(20, 20, &game_rect_destruct);
+    rectRandomize(30, 30, &game_rect_destruct);
     return 0;
 }
 
@@ -109,13 +109,16 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
         return SDL_APP_FAILURE;
     }
 
-    if(!SDL_CreateWindowAndRenderer(
-        "Click On It!", 
-        wwidth, wheight, 
-        0, 
-        &window, &renderer
-    )) {
-        SDL_Log("Error: SDL: Couldn't create window and/or renderer: %s", SDL_GetError());
+    if(!(window = SDL_CreateWindow("Click On It!", wwidth, wheight, 0))) {
+        SDL_Log("Error: SDL: Couldn't create window: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+    if(!(renderer = SDL_CreateRenderer(window, NULL))) {
+        SDL_Log("Error: SDL: Could not create a renderer: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+    if(!SDL_SetRenderVSync(renderer, 1)) {
+        SDL_Log("Error: SDL: Could not set VSync on renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
@@ -164,7 +167,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
     
     if(mbtn & SDL_BUTTON_LMASK) {
         SDL_SetRenderDrawColor(renderer, 0xDD, 0xDD, 0xDD, 0xAA);
-        utilDrawFillCircle(renderer, mx - 3, my - 3, 6);
+        utilDrawFillCircle(renderer, mx, my, 6);
         
         SDL_SetRenderDrawColor(renderer, 0xDD, 0xDD, 0x50, 0xFF);
         for(int i = 0; i < GAME_RECT_AMOUNT; ++i) {
@@ -173,7 +176,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
                 game_rect_dead = game_rects[i];
                 game_rect_lerp = 300;
                 rectRandomize(20, 20, &game_rects[i]);
-                rectRandomize(20, 20, &game_rect_destruct);
+                rectRandomize(30, 30, &game_rect_destruct);
             }
 
             SDL_RenderFillRect(renderer, &game_rects[i]);
@@ -185,8 +188,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         game_rect_dead.h = invert_lerp/3;
         game_rect_dead.w = invert_lerp/3;
 
-        game_rect_dead.x = game_rect_dead.x - game_rect_dead.w/3;
-        game_rect_dead.y = game_rect_dead.y - game_rect_dead.h/3;
+        game_rect_dead.x = game_rect_dead.x - game_rect_dead.w/2;
+        game_rect_dead.y = game_rect_dead.y - game_rect_dead.h/2;
         SDL_RenderFillRect(renderer, &game_rect_dead);
 
         game_rect_lerp--;
