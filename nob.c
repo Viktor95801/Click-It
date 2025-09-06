@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
         });
     }
 
-    nob_procs_wait_and_reset(&procs);
+    if(!nob_procs_wait_and_reset(&procs)) return 1;
 
     nob_cc(&cmd);
     nob_cc_output(&cmd, APP_NAME);
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
     nob_cmd_append(&cmd, "-lSDL3");
     nob_cmd_append(&cmd, "-lSDL3_ttf");
 
-    nob_cmd_run(&cmd);
+    if(!nob_cmd_run(&cmd)) return 1;
 
     return 0;
 }

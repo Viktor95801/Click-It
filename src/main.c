@@ -192,15 +192,15 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         game_rect_lerp--;
     }
 
+    SDL_SetRenderDrawColor(renderer, 0xDD, 0x50, 0x50, 0xFF);
+    SDL_RenderFillRect(renderer, &game_rect_destruct);
+
     if(mbtn & SDL_BUTTON_LMASK && rectPointInside(mx, my, &game_rect_destruct)) {
         char buf[128];
         SDL_snprintf(buf, SDL_arraysize(buf), "Game Over. Final Score: %04d", player_score);
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Game result", buf, window);
         return SDL_APP_SUCCESS;
     }
-
-    SDL_SetRenderDrawColor(renderer, 0xDD, 0x50, 0x50, 0xFF);
-    SDL_RenderFillRect(renderer, &game_rect_destruct);
 
     {
         SDL_SetRenderDrawColor(renderer, 0xDD, 0xDD, 0xDD, 0xFF);
